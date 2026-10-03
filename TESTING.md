@@ -1,4 +1,10 @@
-# 测试说明（打字输入模拟器 VmTyper）
+# VmTyper 测试说明
+- 测试完成：是（2026-10-04）
+- 测试日期：2026-10-04
+- 测试内容：单元测试覆盖 TypingWorker 参数钳制（cps→0.1、负值→0）、逐字投递与 progress 信号顺序、空文本直接完成；停止/失败路径（钩子）覆盖中途 stop→用户中止、控制器返回失败、控制器抛异常被 run() try/except 兜住不崩线程；注入测试验证 NUL/ANSI 转义/中文/emoji/Tab 逐字原样透传、`\n` 唯一路由到 VK_RETURN；控制器路由覆盖 KeyboardController 的 `\n` vs Unicode 分发、未知 method 返回 False。用 FakeController 替换真实键盘，不真发按键。涉及模块：typing worker、KeyboardController。
+- 运行命令：python -m pytest tests/ -v（QT_QPA_PLATFORM=offscreen）
+- 测试框架：pytest（PyQt5 offscreen）
+- 模型：豆包（Doubao）生成
 
 ## 运行方式
 
