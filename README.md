@@ -44,3 +44,15 @@
 请遵守网站使用条款与相关法律法规，本工具仅用于提升个人输入体验与可访问性。
 ## Windows版本下载链接
 http://cidaiji.com/api/cloud-files/shared/7042f19bb925b75bdc3c721c603532f3
+
+---
+
+<div align="center">
+
+<a href="https://github.com/yxpil/VmTyper">
+  <img width="100%" src="https://alittlecatgirlpanel.yxp.hk/card?repo=yxpil/VmTyper" alt="gh-card · yxpil/VmTyper" />
+</a>
+
+<sub>Powered by <a href="https://alittlecatgirlpanel.yxp.hk"><b>gh-card</b></a> · 粉色手写体 README 仓库名片</sub>
+
+</div>
