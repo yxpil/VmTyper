@@ -1,12 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_submodules
+
+# pynput 是在 _init_controllers() 里动态导入的，静态分析看不到，需要显式收集
+# （包括当前平台的 keyboard/mouse 后端）。
+hiddenimports = collect_submodules('pynput')
 
 
 a = Analysis(
     ['main.py'],
-    pathex=['C:\\Users\\yxpil\\Desktop\\打字模拟器\\venv\\Lib\\site-packages\\PyQt5\\Qt5'],
+    pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -22,7 +27,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='VmTyper',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
