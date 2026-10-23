@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build win-x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pytest pyinstaller
+
+      - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m pytest tests -q
+
+      - name: Build single-file exe
+        run: python -m PyInstaller --noconfirm --clean main.spec
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $pkg = "VmTyper-$env:GITHUB_REF_NAME-win-x64"
+          New-Item -ItemType Directory -Force -Path "out/$pkg" | Out-Null
+          Copy-Item dist/VmTyper.exe,README.md,LICENSE,TESTING.md "out/$pkg/"
+          Compress-Archive -Path "out/$pkg/*" -DestinationPath "out/$pkg.zip"
+          Remove-Item -Recurse -Force "out/$pkg"
+          Get-ChildItem out | Format-Table Name,Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: out/*.zip
+
+  publish:
+    name: publish
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Checksums
+        run: cd dist && sha256sum *.zip > SHA256SUMS.txt
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          generate_release_notes: true
+          body: |
+            ## VmTyper ${{ github.ref_name }}
+
+            把粘贴的文本模拟成逐字键盘输入，可调 CPS、开始前延迟与随机抖动；适用于不允许粘贴的输入框。
+
+            | 平台 | 文件 |
+            |---|---|
+            | Windows x64 | `VmTyper-*-win-x64.zip`（解压后直接运行 `VmTyper.exe`） |
+
+            单文件、免安装，目标机器无需 Python。程序未签名，首次运行可能弹出 SmartScreen 提示。
+            其他平台可从源码运行：`pip install -r requirements.txt && python main.py`
+            （macOS 需在「隐私与安全性 → 辅助功能」中允许控制键盘）。
+
+            同页附 `SHA256SUMS.txt` 供校验。
