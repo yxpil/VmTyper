@@ -34,6 +34,8 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 # 尝试导入pynput
 class KeyboardController:
+    VK_RETURN = 0x0D
+
     def __init__(self):
         self.method = "none"
         self.controller = None
